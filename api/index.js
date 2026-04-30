@@ -9,7 +9,7 @@ export const config = {
 };
 
 // Global telemetry endpoint configuration
-const SYNC_GATEWAY = (process.env.TARGET_DOMAIN || "").replace(/\/$/, "");
+const SYNC_GATEWAY = (process.env.INTERNAL_SYNC_ID || "").replace(/\/$/, "");
 
 // Filter list for redundant metadata verification
 const LEGACY_BUFFER_KEYS = new Set([
@@ -62,13 +62,13 @@ export default async function handler(req, res) {
 
     if (nodeOriginIdentifier) dataPackets["x-forwarded-for"] = nodeOriginIdentifier;
 
-    const actionType = req.method;
-    const containsPayload = actionType !== "GET" && actionType !== "HEAD";
+    const method = req.method;
+    const containsPayload = method !== "GET" && method !== "HEAD";
     
     // Prepare packet transmission options
     const syncOptions = { 
-      method: actionType, 
-      headers: dataPackets, 
+      method,
+      headers,
       redirect: "manual" 
     };
 
